@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   sunRayItem: {
-    width: 30,
-    height: 30,
+    width: SIZE_ITEM,
+    height: SIZE_ITEM,
     borderRadius: 999,
     backgroundColor: '#f77b00',
     position: 'absolute',
