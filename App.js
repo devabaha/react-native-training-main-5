@@ -7,13 +7,14 @@
  */
 
 import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, Button, DevSettings} from 'react-native';
 import Sun from './src/components/Sun';
 
 const App = (props) => {
   return (
     <SafeAreaView style={styles.container}>
       <Sun />
+      <Button title="Toggle" color={'#fbaa59'} onPress={() => DevSettings.reload()} />
     </SafeAreaView>
   );
 };
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#333552'
+    backgroundColor: '#333552',
   },
 });
 

@@ -4,25 +4,28 @@ import {View, StyleSheet} from 'react-native';
 const SIZE_ITEM = 30;
 
 const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
-  const RADIUS = useMemo(() => {
-    return (sizeBlockSunRayList + SIZE_ITEM) / 2;
+  const radius = useMemo(() => {
+    return sizeBlockSunRayList / 2;
   }, [sizeBlockSunRayList]);
 
-  const ANGLE_ITEM = useMemo(() => {
+  const angleItem = useMemo(() => {
     return (2 * Math.PI) / sunRayList.length;
   }, [sunRayList]);
 
   return (
     <View style={styles.container}>
       {sunRayList.map((_, index) => {
-        const ANGLE_THIS_ITEM = ANGLE_ITEM * index - Math.PI / 2;
-        const COORDINATE_ITEM = {
-          left: RADIUS * Math.cos(ANGLE_THIS_ITEM) + RADIUS - SIZE_ITEM,
-          top: RADIUS * Math.sin(ANGLE_THIS_ITEM) + RADIUS - SIZE_ITEM,
+        const angleThisItem = angleItem * index - Math.PI / 2;
+        const coordinateItemStyle = {
+          left: radius * Math.cos(angleThisItem) + radius - SIZE_ITEM,
+          top: radius * Math.sin(angleThisItem) + radius - SIZE_ITEM,
+          transform: [{rotate: `${angleThisItem * 180}deg`}],
         };
 
         return (
-          <View key={index} style={[styles.sunRayItem, COORDINATE_ITEM]}></View>
+          <View
+            key={index}
+            style={[styles.sunRayItem, coordinateItemStyle]}></View>
         );
       })}
     </View>
@@ -32,13 +35,18 @@ const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    transform: [{translateX: SIZE_ITEM / 2}, {translateY: SIZE_ITEM / 2}],
   },
+
   sunRayItem: {
-    width: SIZE_ITEM,
-    height: SIZE_ITEM,
-    borderRadius: 999,
-    backgroundColor: '#f77b00',
     position: 'absolute',
+    borderTopWidth: SIZE_ITEM,
+    borderLeftWidth: SIZE_ITEM / 2,
+    borderRightWidth: SIZE_ITEM / 2,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: '#f77b00',
+    borderRadius: 999,
   },
 });
 
