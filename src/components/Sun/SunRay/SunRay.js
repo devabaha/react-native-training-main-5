@@ -16,10 +16,11 @@ const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
     <View style={styles.container}>
       {sunRayList.map((_, index) => {
         const angleThisItem = angleItem * index - Math.PI / 2;
+
         const coordinateItemStyle = {
           left: radius * Math.cos(angleThisItem) + radius - SIZE_ITEM,
           top: radius * Math.sin(angleThisItem) + radius - SIZE_ITEM,
-          transform: [{rotate: `${angleThisItem * 180}deg`}],
+          transform: [{rotate: `${angleThisItem * 180 + 135}deg`}],
         };
 
         return (
