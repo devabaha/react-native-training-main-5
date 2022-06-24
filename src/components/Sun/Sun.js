@@ -1,16 +1,15 @@
 import React, {useState, useCallback} from 'react';
-import {View, Text, StyleSheet, Animated, Button} from 'react-native';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import SunRay from './SunRay';
 
-const Sun = (props) => {
-  const [sunRayList] = useState(['', '', '', '', '', '', '', '', '']);
+const Sun = ({animate}) => {
   const [sizeBlockSunRayList, setSizeBlockSunRayList] = useState(0);
 
   const handleSetSizeBlockSunRayList = useCallback(
     (event) => {
       setSizeBlockSunRayList(event.nativeEvent.layout.height);
     },
-    [sunRayList],
+    [handleSetSizeBlockSunRayList],
   );
 
   return (
@@ -20,10 +19,7 @@ const Sun = (props) => {
           <Text style={styles.text}>Sun</Text>
         </View>
 
-        <SunRay
-          sunRayList={sunRayList}
-          sizeBlockSunRayList={sizeBlockSunRayList}
-        />
+        <SunRay animate={animate} sizeBlockSunRayList={sizeBlockSunRayList} />
 
         {/* <View
           style={{

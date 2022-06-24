@@ -6,15 +6,21 @@
  * @flow strict-local
  */
 
-import React from 'react';
-import {SafeAreaView, StyleSheet, Button, DevSettings} from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, StyleSheet, Button} from 'react-native';
 import Sun from './src/components/Sun';
 
 const App = (props) => {
+  const [isAnimate, setAnimate] = useState(false);
+
+  const handleAnimate = () => {
+    setAnimate((preState) => !preState);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Sun />
-      <Button title="Toggle" color={'#fbaa59'} onPress={() => DevSettings.reload()} />
+      <Sun animate={isAnimate} />
+      <Button title="Toggle" color={'#fbaa59'} onPress={handleAnimate} />
     </SafeAreaView>
   );
 };

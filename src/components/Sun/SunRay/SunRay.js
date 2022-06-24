@@ -1,9 +1,15 @@
-import React, {useMemo} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useMemo, useState, useCallback, useEffect} from 'react';
+import {View, StyleSheet, Animated} from 'react-native';
 
 const SIZE_ITEM = 30;
 
-const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
+const SunRay = ({animate, sizeBlockSunRayList}) => {
+  const [sunRayList] = useState(
+    Array.from({length: Math.floor(160 / (SIZE_ITEM / 4))}).map(() => ''),
+  );
+
+  const [rotateVal] = useState(new Animated.Value(0));
+
   const radius = useMemo(() => {
     return sizeBlockSunRayList / 2;
   }, [sizeBlockSunRayList]);
@@ -12,26 +18,44 @@ const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
     return 360 / sunRayList.length;
   }, [sunRayList]);
 
+  const rotateAnimation = useCallback(() => {
+    Animated.stagger(300, [
+      Animated.timing(rotateVal, {
+        toValue: 150,
+        duration: 5000,
+        useNativeDriver: true,
+      }),
+      Animated.delay(5000),
+    ]).start();
+  }, [rotateVal]);
+
+  useEffect(() => {
+    rotateAnimation();
+  }, [animate]);
+
   return (
     <View style={styles.container}>
       {sunRayList.map((_, index) => {
-        const angleThisItem = angleItem * index;
+        const angleThisItemDegree = angleItem * index;
+        const angleThisItemRadius =
+          (angleThisItemDegree * Math.PI) / 180 - Math.PI / 2;
         const coordinateItemStyle = {
-          left:
-            radius * Math.cos((angleThisItem * Math.PI) / 180 - Math.PI / 2) +
-            radius -
-            SIZE_ITEM,
-          top:
-            radius * Math.sin((angleThisItem * Math.PI) / 180 - Math.PI / 2) +
-            radius -
-            SIZE_ITEM,
-          transform: [{rotate: `${angleThisItem}deg`}],
+          left: radius * Math.cos(angleThisItemRadius) + radius - SIZE_ITEM,
+          top: radius * Math.sin(angleThisItemRadius) + radius - SIZE_ITEM,
+          transform: [{rotate: `${angleThisItemDegree}deg`}],
         };
 
         return (
-          <View
+          <Animated.View
             key={index}
-            style={[styles.sunRayItem, coordinateItemStyle]}></View>
+            style={[
+              styles.sunRayItem,
+              coordinateItemStyle,
+
+              // animate && {
+              //   transform: [{rotate: rotateVal}],
+              // },
+            ]}></Animated.View>
         );
       })}
     </View>
