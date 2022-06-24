@@ -9,18 +9,23 @@ const SunRay = ({sunRayList, sizeBlockSunRayList}) => {
   }, [sizeBlockSunRayList]);
 
   const angleItem = useMemo(() => {
-    return (2 * Math.PI) / sunRayList.length;
+    return 360 / sunRayList.length;
   }, [sunRayList]);
 
   return (
     <View style={styles.container}>
       {sunRayList.map((_, index) => {
-        const angleThisItem = angleItem * index - Math.PI / 2;
-
+        const angleThisItem = angleItem * index;
         const coordinateItemStyle = {
-          left: radius * Math.cos(angleThisItem) + radius - SIZE_ITEM,
-          top: radius * Math.sin(angleThisItem) + radius - SIZE_ITEM,
-          transform: [{rotate: `${angleThisItem * 180 + 135}deg`}],
+          left:
+            radius * Math.cos((angleThisItem * Math.PI) / 180 - Math.PI / 2) +
+            radius -
+            SIZE_ITEM,
+          top:
+            radius * Math.sin((angleThisItem * Math.PI) / 180 - Math.PI / 2) +
+            radius -
+            SIZE_ITEM,
+          transform: [{rotate: `${angleThisItem}deg`}],
         };
 
         return (

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, Animated, Button} from 'react-native';
 import SunRay from './SunRay';
 
 const Sun = (props) => {
-  const [sunRayList] = useState(['', '', '', '', '', '']);
+  const [sunRayList] = useState(['', '', '', '', '', '', '', '', '']);
   const [sizeBlockSunRayList, setSizeBlockSunRayList] = useState(0);
 
   const handleSetSizeBlockSunRayList = useCallback(
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#333552',
     fontWeight: '600',
-    fontSize: 24,
+    fontSize: 22,
   },
 });
 
