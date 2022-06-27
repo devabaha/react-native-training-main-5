@@ -12,7 +12,9 @@ const SIZE_ITEM = 30;
 
 const SunRay = ({animate, sizeBlockSunRayList}) => {
   const [sunRayList] = useState(
-    Array.from({length: Math.floor(160 / (SIZE_ITEM / 4))}).map(() => ''),
+    Array.from({length: Math.floor(160 / (SIZE_ITEM / 4))}).map(
+      () => useRef(new Animated.Value(0)).current,
+    ),
   );
 
   const radius = useMemo(() => {
@@ -23,36 +25,26 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
     return 360 / sunRayList.length;
   }, [sunRayList]);
 
-  const animateValues = [];
-
-  sunRayList.forEach((_, i) => {
-    animateValues[i] = useRef(new Animated.Value(0)).current;
-  });
-
   const rotateAnimation = useCallback(() => {
     Animated.stagger(
       500,
-      sunRayList.map((_, i) =>
-        Animated.timing(animateValues[i], {
+      sunRayList.map((item) =>
+        Animated.timing(item, {
           toValue: 1,
           duration: 500,
           useNativeDriver: true,
         }),
       ),
-    ).start(({finished}) => {
-      if (finished) {
-        console.log('done');
-      }
-    });
+    ).start();
   }, [rotateAnimation]);
 
   useEffect(() => {
-    rotateAnimation();
+    animate && rotateAnimation();
   }, [animate]);
 
   return (
     <View style={styles.container}>
-      {sunRayList.map((_, index) => {
+      {sunRayList.map((item, index) => {
         const angleThisItemDegree = angleItem * index;
         const angleThisItemRadius =
           (angleThisItemDegree * Math.PI) / 180 - Math.PI / 2;
@@ -68,13 +60,15 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
             style={[
               styles.sunRayItem,
               coordinateItemStyle,
-
               animate && {
                 transform: [
                   {
-                    rotate: animateValues[index].interpolate({
+                    rotate: item.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0, 180],
+                      outputRange: [
+                        `${angleThisItemDegree}deg`,
+                        `${angleThisItemDegree + 180}deg`,
+                      ],
                     }),
                   },
                 ],
