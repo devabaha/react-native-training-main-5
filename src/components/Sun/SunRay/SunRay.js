@@ -1,4 +1,11 @@
-import React, {useMemo, useState, useCallback, useEffect} from 'react';
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  memo,
+  useRef,
+} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 
 const SIZE_ITEM = 30;
@@ -8,8 +15,6 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
     Array.from({length: Math.floor(160 / (SIZE_ITEM / 4))}).map(() => ''),
   );
 
-  const [rotateVal] = useState(new Animated.Value(0));
-
   const radius = useMemo(() => {
     return sizeBlockSunRayList / 2;
   }, [sizeBlockSunRayList]);
@@ -18,16 +23,28 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
     return 360 / sunRayList.length;
   }, [sunRayList]);
 
+  const animateValues = [];
+
+  sunRayList.forEach((_, i) => {
+    animateValues[i] = useRef(new Animated.Value(0)).current;
+  });
+
   const rotateAnimation = useCallback(() => {
-    Animated.stagger(300, [
-      Animated.timing(rotateVal, {
-        toValue: 150,
-        duration: 5000,
-        useNativeDriver: true,
-      }),
-      Animated.delay(5000),
-    ]).start();
-  }, [rotateVal]);
+    Animated.stagger(
+      500,
+      sunRayList.map((_, i) =>
+        Animated.timing(animateValues[i], {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ),
+    ).start(({finished}) => {
+      if (finished) {
+        console.log('done');
+      }
+    });
+  }, [rotateAnimation]);
 
   useEffect(() => {
     rotateAnimation();
@@ -52,9 +69,16 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
               styles.sunRayItem,
               coordinateItemStyle,
 
-              // animate && {
-              //   transform: [{rotate: rotateVal}],
-              // },
+              animate && {
+                transform: [
+                  {
+                    rotate: animateValues[index].interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 180],
+                    }),
+                  },
+                ],
+              },
             ]}></Animated.View>
         );
       })}
@@ -80,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SunRay;
+export default memo(SunRay);

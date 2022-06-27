@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, memo} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import SunRay from './SunRay';
 
@@ -9,7 +9,7 @@ const Sun = ({animate}) => {
     (event) => {
       setSizeBlockSunRayList(event.nativeEvent.layout.height);
     },
-    [handleSetSizeBlockSunRayList],
+    [sizeBlockSunRayList, handleSetSizeBlockSunRayList],
   );
 
   return (
@@ -20,14 +20,13 @@ const Sun = ({animate}) => {
         </View>
 
         <SunRay animate={animate} sizeBlockSunRayList={sizeBlockSunRayList} />
-
-        {/* <View
+{/* 
+        <View
           style={{
             position: 'absolute',
-            width: 180,
-            height: 180,
-            borderWidth: 2,
-            borderColor: '#f77b00',
+            width: sizeBlockSunRayList,
+            height: sizeBlockSunRayList,
+            backgroundColor: 'orange',
             borderRadius: 999,
           }}></View> */}
       </View>
@@ -65,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Sun;
+export default memo(Sun);
