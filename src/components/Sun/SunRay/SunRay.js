@@ -12,7 +12,7 @@ const SIZE_ITEM = 30;
 
 const SunRay = ({animate, sizeBlockSunRayList}) => {
   const [sunRayList] = useState(
-    Array.from({length: Math.floor(160 / (SIZE_ITEM / 4))}).map(
+    Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
       () => useRef(new Animated.Value(0)).current,
     ),
   );

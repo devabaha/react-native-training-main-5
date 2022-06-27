@@ -1,34 +1,19 @@
-import React, {useState, useCallback, memo} from 'react';
-import {View, Text, StyleSheet, Animated} from 'react-native';
+import React, {memo} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import SunRay from './SunRay';
 
+const SIZE_BLOCK_SUN_RAY_LIST = 160;
 const Sun = ({animate}) => {
-  const [sizeBlockSunRayList, setSizeBlockSunRayList] = useState(0);
-
-  const handleSetSizeBlockSunRayList = useCallback(
-    (event) => {
-      setSizeBlockSunRayList(event.nativeEvent.layout.height);
-    },
-    [sizeBlockSunRayList, handleSetSizeBlockSunRayList],
-  );
-
   return (
     <View style={styles.sunLayer}>
-      <View style={styles.sunLayer1} onLayout={handleSetSizeBlockSunRayList}>
+      <View style={[styles.sunLayer1]}>
+        <SunRay
+          animate={animate}
+          sizeBlockSunRayList={SIZE_BLOCK_SUN_RAY_LIST}
+        />
         <View style={styles.sunLayer2}>
           <Text style={styles.text}>Sun</Text>
         </View>
-
-        <SunRay animate={animate} sizeBlockSunRayList={sizeBlockSunRayList} />
-{/* 
-        <View
-          style={{
-            position: 'absolute',
-            width: sizeBlockSunRayList,
-            height: sizeBlockSunRayList,
-            backgroundColor: 'orange',
-            borderRadius: 999,
-          }}></View> */}
       </View>
     </View>
   );
@@ -46,13 +31,16 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#8d7e73',
     borderRadius: 999,
+    width: SIZE_BLOCK_SUN_RAY_LIST,
+    height: SIZE_BLOCK_SUN_RAY_LIST,
   },
   sunLayer2: {
+    position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fdd361',
-    width: 120,
-    height: 120,
+    width: SIZE_BLOCK_SUN_RAY_LIST,
+    height: SIZE_BLOCK_SUN_RAY_LIST,
     borderWidth: 20,
     borderColor: '#fbaa59',
     borderRadius: 999,
