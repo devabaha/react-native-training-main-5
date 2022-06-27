@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 
-const SIZE_ITEM = 30;
+const SIZE_ITEM = 40;
 
 const SunRay = ({animate, sizeBlockSunRayList}) => {
   const [sunRayList] = useState(
@@ -25,21 +25,24 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
     return 360 / sunRayList.length;
   }, [sunRayList]);
 
-  const rotateAnimation = useCallback(() => {
-    Animated.stagger(
-      500,
-      sunRayList.map((item) =>
-        Animated.timing(item, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ),
-    ).start();
-  }, [rotateAnimation]);
+  const rotateAnimation = useCallback(
+    (toValue) => {
+      Animated.sequence(
+        sunRayList.map((item) =>
+          Animated.timing(item, {
+            toValue: toValue,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+        ),
+      ).start();
+    },
+    [rotateAnimation],
+  );
 
   useEffect(() => {
-    animate && rotateAnimation();
+    const toValue = animate ? 1 : 0;
+    rotateAnimation(toValue);
   }, [animate]);
 
   return (
@@ -60,7 +63,7 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
             style={[
               styles.sunRayItem,
               coordinateItemStyle,
-              animate && {
+              {
                 transform: [
                   {
                     rotate: item.interpolate({
@@ -73,7 +76,9 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
                   },
                 ],
               },
-            ]}></Animated.View>
+            ]}>
+            <Animated.View style={styles.sunLight}></Animated.View>
+          </Animated.View>
         );
       })}
     </View>
@@ -95,6 +100,13 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderTopColor: '#f77b00',
     borderRadius: 999,
+  },
+  sunLight: {
+    position: 'absolute',
+    top: SIZE_ITEM,
+    width: 2,
+    height: 2 * SIZE_ITEM,
+    backgroundColor: '#f4af01',
   },
 });
 
