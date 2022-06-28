@@ -10,7 +10,8 @@ import {View, StyleSheet, Animated} from 'react-native';
 
 const SIZE_ITEM = 40;
 
-const SunRay = ({animate, sizeBlockSunRayList}) => {
+const SunRay = ({animate, sizeBlockSunRayList, setBloom}) => {
+  // create array animation, map array for apply each element
   const [sunRayList] = useState(
     Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
       () => useRef(new Animated.Value(0)).current,
@@ -31,13 +32,18 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
         sunRayList.map((item) =>
           Animated.timing(item, {
             toValue: toValue,
-            duration: 500,
+            duration: 200,
             useNativeDriver: true,
           }),
         ),
-      ).start();
+        // some animation here
+      ).start(({finished}) => {
+        if (finished && animate) {
+          setBloom(true);
+        }
+      });
     },
-    [rotateAnimation],
+    [animate, rotateAnimation],
   );
 
   useEffect(() => {
@@ -77,7 +83,16 @@ const SunRay = ({animate, sizeBlockSunRayList}) => {
                 ],
               },
             ]}>
-            <Animated.View style={styles.sunLight}></Animated.View>
+            <Animated.View
+              style={[
+                styles.sunLight,
+                {
+                  opacity: item.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1],
+                  }),
+                },
+              ]}></Animated.View>
           </Animated.View>
         );
       })}
@@ -103,7 +118,7 @@ const styles = StyleSheet.create({
   },
   sunLight: {
     position: 'absolute',
-    top: SIZE_ITEM,
+    top: 1.5 * SIZE_ITEM,
     width: 2,
     height: 2 * SIZE_ITEM,
     backgroundColor: '#f4af01',

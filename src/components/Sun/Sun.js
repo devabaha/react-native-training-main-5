@@ -1,19 +1,68 @@
-import React, {memo} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useState, useCallback, useEffect, memo} from 'react';
+import {View, Text, StyleSheet, Animated} from 'react-native';
 import SunRay from './SunRay';
 
 const SIZE_BLOCK_SUN_RAY_LIST = 160;
 
 const Sun = ({animate}) => {
+  const [isBloom, setBloom] = useState(false);
+  const [sunAnimation] = useState(new Animated.Value(0));
+
+  const sunAnimate = useCallback(() => {
+    Animated.sequence([
+      Animated.timing(sunAnimation, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(sunAnimation, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start(({finished}) => {
+      if (finished) {
+        setBloom(false);
+      }
+    });
+  }, [isBloom, sunAnimate]);
+
+  useEffect(() => {
+    isBloom && sunAnimate();
+  }, [isBloom]);
+
   return (
-    <View style={[styles.sunLayer]}>
-      <SunRay animate={animate} sizeBlockSunRayList={SIZE_BLOCK_SUN_RAY_LIST} />
+    <Animated.View
+      style={[
+        styles.sunLayer,
+        {
+          transform: [
+            {
+              scale: sunAnimation.interpolate({
+                inputRange: [0, 0.5, 1],
+                outputRange: [1, 1.2, 1.4],
+              }),
+            },
+            {
+              rotate: sunAnimation.interpolate({
+                inputRange: [0, 0.25, 0.5, 0.75, 1],
+                outputRange: ['0deg', '30deg', '-30deg', '30deg', '-30deg'],
+              }),
+            },
+          ],
+        },
+      ]}>
+      <SunRay
+        animate={animate}
+        sizeBlockSunRayList={SIZE_BLOCK_SUN_RAY_LIST}
+        setBloom={setBloom}
+      />
       <View style={styles.sunLayer1}>
         <View style={styles.sunLayer2}>
           <Text style={styles.text}>Sun</Text>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -23,7 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     width: SIZE_BLOCK_SUN_RAY_LIST,
     height: SIZE_BLOCK_SUN_RAY_LIST,
-    marginBottom: 100,
+    marginBottom: 40,
   },
   sunLayer1: {
     position: 'absolute',

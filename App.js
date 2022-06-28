@@ -6,16 +6,16 @@
  * @flow strict-local
  */
 
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {SafeAreaView, StyleSheet, Button} from 'react-native';
 import Sun from './src/components/Sun';
 
 const App = (props) => {
   const [isAnimate, setAnimate] = useState(false);
 
-  const handleAnimate = () => {
+  const handleAnimate = useCallback(() => {
     setAnimate((preState) => !preState);
-  };
+  }, [isAnimate, handleAnimate]);
 
   return (
     <SafeAreaView style={styles.container}>

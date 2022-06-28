@@ -18,6 +18,7 @@ ex: prac1/minhnh
                 24/6/2022 (4h)
                 25/6/2022 (5h)
                 27/6/2022 (6h)
+                28/6/2022 (6h)
 - Author: DongNK form Abaha
 
 
