@@ -1,15 +1,20 @@
-import React, {useState, useCallback, useEffect, memo} from 'react';
+import React, {useState, useCallback, memo} from 'react';
 import {View, Text, StyleSheet, Animated} from 'react-native';
 import SunRay from './SunRay';
 
 const SIZE_BLOCK_SUN_RAY_LIST = 160;
 
 const Sun = ({animate}) => {
-  const [isBloom, setBloom] = useState(false);
   const [sunAnimation] = useState(new Animated.Value(0));
 
-  const sunAnimate = useCallback(() => {
+  const handleSunAnimate = useCallback(() => {
     Animated.sequence([
+      // Animated.spring(sunAnimation, {
+      //   toValue: 100,
+      //   friction: 2,
+      //   tension: 140,
+      //   useNativeDriver: true,
+      // }),
       Animated.timing(sunAnimation, {
         toValue: 1,
         duration: 1000,
@@ -20,16 +25,8 @@ const Sun = ({animate}) => {
         duration: 1000,
         useNativeDriver: true,
       }),
-    ]).start(({finished}) => {
-      if (finished) {
-        setBloom(false);
-      }
-    });
-  }, [isBloom, sunAnimate]);
-
-  useEffect(() => {
-    isBloom && sunAnimate();
-  }, [isBloom]);
+    ]).start();
+  }, [handleSunAnimate]);
 
   return (
     <Animated.View
@@ -55,7 +52,7 @@ const Sun = ({animate}) => {
       <SunRay
         animate={animate}
         sizeBlockSunRayList={SIZE_BLOCK_SUN_RAY_LIST}
-        setBloom={setBloom}
+        handleSunAnimate={handleSunAnimate}
       />
       <View style={styles.sunLayer1}>
         <View style={styles.sunLayer2}>

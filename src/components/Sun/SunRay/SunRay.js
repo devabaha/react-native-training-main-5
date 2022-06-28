@@ -10,7 +10,7 @@ import {View, StyleSheet, Animated} from 'react-native';
 
 const SIZE_ITEM = 40;
 
-const SunRay = ({animate, sizeBlockSunRayList, setBloom}) => {
+const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
   // create array animation, map array for apply each element
   const [sunRayList] = useState(
     Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
@@ -26,7 +26,7 @@ const SunRay = ({animate, sizeBlockSunRayList, setBloom}) => {
     return 360 / sunRayList.length;
   }, [sunRayList]);
 
-  const rotateAnimation = useCallback(
+  const handleRotateAnimation = useCallback(
     (toValue) => {
       Animated.sequence(
         sunRayList.map((item) =>
@@ -38,17 +38,17 @@ const SunRay = ({animate, sizeBlockSunRayList, setBloom}) => {
         ),
         // some animation here
       ).start(({finished}) => {
-        if (finished && animate) {
-          setBloom(true);
+        if (animate) {
+          handleSunAnimate();
         }
       });
     },
-    [animate, rotateAnimation],
+    [animate, handleRotateAnimation],
   );
 
   useEffect(() => {
     const toValue = animate ? 1 : 0;
-    rotateAnimation(toValue);
+    handleRotateAnimation(toValue);
   }, [animate]);
 
   return (
