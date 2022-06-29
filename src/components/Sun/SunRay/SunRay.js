@@ -18,6 +18,12 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
     ),
   );
 
+  const [fireLightList] = useState(
+    Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
+      () => useRef(new Animated.Value(0)).current,
+    ),
+  );
+
   const radius = useMemo(() => {
     return sizeBlockSunRayList / 2;
   }, [sizeBlockSunRayList]);
@@ -27,18 +33,18 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
   }, [sunRayList]);
 
   const handleRotateAnimation = useCallback(
-    (toValue) => {
-      Animated.sequence(
+    (toValue, duration) => {
+      Animated.stagger(
+        500,
         sunRayList.map((item) =>
           Animated.timing(item, {
             toValue: toValue,
-            duration: 200,
+            duration: duration,
             useNativeDriver: true,
           }),
         ),
-        // some animation here
       ).start(({finished}) => {
-        if (animate) {
+        if (finished && animate) {
           handleSunAnimate();
         }
       });
@@ -46,9 +52,31 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
     [animate, handleRotateAnimation],
   );
 
+  const handleFireLightAnimation = useCallback(
+    (duration) => {
+      Animated.stagger(
+        500,
+        fireLightList.map((item) =>
+          Animated.timing(item, {
+            toValue: 1,
+            duration: duration,
+            useNativeDriver: true,
+          }),
+        ),
+      ).start();
+    },
+    [animate, handleFireLightAnimation],
+  );
+
   useEffect(() => {
     const toValue = animate ? 1 : 0;
-    handleRotateAnimation(toValue);
+    const duration = animate ? 500 : 1000;
+    if (animate) {
+      handleRotateAnimation(toValue, duration);
+    } else {
+      handleRotateAnimation(toValue, duration);
+      handleFireLightAnimation(duration);
+    }
   }, [animate]);
 
   return (
@@ -91,6 +119,16 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
                     inputRange: [0, 1],
                     outputRange: [0, 1],
                   }),
+                },
+                !animate && {
+                  transform: [
+                    {
+                      translateY: fireLightList[index].interpolate({
+                        inputRange: [0, 0.5, 1],
+                        outputRange: [0, 360, 600],
+                      }),
+                    },
+                  ],
                 },
               ]}></Animated.View>
           </Animated.View>

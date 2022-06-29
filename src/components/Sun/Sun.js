@@ -9,24 +9,20 @@ const Sun = ({animate}) => {
 
   const handleSunAnimate = useCallback(() => {
     Animated.sequence([
-      // Animated.spring(sunAnimation, {
-      //   toValue: 100,
-      //   friction: 2,
-      //   tension: 140,
-      //   useNativeDriver: true,
-      // }),
       Animated.timing(sunAnimation, {
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
       }),
-      Animated.timing(sunAnimation, {
+      Animated.spring(sunAnimation, {
         toValue: 0,
-        duration: 1000,
+        duration: 500,
+        mass: 10,
+        damping: 30,
         useNativeDriver: true,
       }),
     ]).start();
-  }, [handleSunAnimate]);
+  }, [animate, handleSunAnimate]);
 
   return (
     <Animated.View
@@ -37,13 +33,13 @@ const Sun = ({animate}) => {
             {
               scale: sunAnimation.interpolate({
                 inputRange: [0, 0.5, 1],
-                outputRange: [1, 1.2, 1.4],
+                outputRange: [1, 1.1, 1.2],
               }),
             },
             {
               rotate: sunAnimation.interpolate({
-                inputRange: [0, 0.25, 0.5, 0.75, 1],
-                outputRange: ['0deg', '30deg', '-30deg', '30deg', '-30deg'],
+                inputRange: [0, 0.3, 0.7, 1],
+                outputRange: ['0deg', '90deg', '-90deg', '30deg'],
               }),
             },
           ],
