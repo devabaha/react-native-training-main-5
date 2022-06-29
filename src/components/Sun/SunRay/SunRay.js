@@ -11,32 +11,29 @@ import {View, StyleSheet, Animated} from 'react-native';
 const SIZE_ITEM = 40;
 
 const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
-  // create array animation, map array for apply each element
-  const [sunRayList] = useState(
-    Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
-      () => useRef(new Animated.Value(0)).current,
-    ),
-  );
-
-  const [fireLightList] = useState(
-    Array.from({length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4))}).map(
-      () => useRef(new Animated.Value(0)).current,
-    ),
-  );
+  // create 2 array animation, map array for apply each element
+  const [listItemSunRay] = useState({
+    listSunRay: Array.from({
+      length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4)),
+    }).map(() => useRef(new Animated.Value(0)).current),
+    listFireSunLight: Array.from({
+      length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4)),
+    }).map(() => useRef(new Animated.Value(0)).current),
+  });
 
   const radius = useMemo(() => {
     return sizeBlockSunRayList / 2;
   }, [sizeBlockSunRayList]);
 
   const angleItem = useMemo(() => {
-    return 360 / sunRayList.length;
-  }, [sunRayList]);
+    return 360 / listItemSunRay.listSunRay.length;
+  }, [listItemSunRay.listSunRay]);
 
   const handleRotateAnimation = useCallback(
     (toValue, duration) => {
       Animated.stagger(
         500,
-        sunRayList.map((item) =>
+        listItemSunRay.listSunRay.map((item) =>
           Animated.timing(item, {
             toValue: toValue,
             duration: duration,
@@ -56,7 +53,7 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
     (duration) => {
       Animated.stagger(
         500,
-        fireLightList.map((item) =>
+        listItemSunRay.listFireSunLight.map((item) =>
           Animated.timing(item, {
             toValue: 1,
             duration: duration,
@@ -81,7 +78,7 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
 
   return (
     <View style={styles.container}>
-      {sunRayList.map((item, index) => {
+      {listItemSunRay.listSunRay.map((item, index) => {
         const angleThisItemDegree = angleItem * index;
         const angleThisItemRadius =
           (angleThisItemDegree * Math.PI) / 180 - Math.PI / 2;
@@ -123,9 +120,11 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
                 !animate && {
                   transform: [
                     {
-                      translateY: fireLightList[index].interpolate({
-                        inputRange: [0, 0.5, 1],
-                        outputRange: [0, 360, 600],
+                      translateY: listItemSunRay.listFireSunLight[
+                        index
+                      ].interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 360],
                       }),
                     },
                   ],
