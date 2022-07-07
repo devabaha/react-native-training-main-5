@@ -15,7 +15,7 @@ const App = (props) => {
 
   const handleAnimate = useCallback(() => {
     setAnimate((preState) => !preState);
-  }, [isAnimate, handleAnimate]);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

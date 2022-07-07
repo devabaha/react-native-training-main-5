@@ -22,7 +22,7 @@ const Sun = ({animate}) => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [animate, handleSunAnimate]);
+  }, []);
 
   return (
     <Animated.View

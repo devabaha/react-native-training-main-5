@@ -15,11 +15,14 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
   const [listItemSunRay] = useState({
     listSunRay: Array.from({
       length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4)),
-    }).map(() => useRef(new Animated.Value(0)).current),
+    }).map(() => new Animated.Value(0)),
     listFireSunLight: Array.from({
       length: Math.floor(sizeBlockSunRayList / (SIZE_ITEM / 4)),
-    }).map(() => useRef(new Animated.Value(0)).current),
+    }).map(() => new Animated.Value(0)),
   });
+
+  const sunRayStagger = useRef();
+  const sunLightStagger = useRef();
 
   const radius = useMemo(() => {
     return sizeBlockSunRayList / 2;
@@ -27,54 +30,75 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
 
   const angleItem = useMemo(() => {
     return 360 / listItemSunRay.listSunRay.length;
-  }, [listItemSunRay.listSunRay]);
+  }, [listItemSunRay]);
 
   const handleRotateAnimation = useCallback(
     (toValue, duration) => {
-      Animated.stagger(
-        500,
-        listItemSunRay.listSunRay.map((item) =>
+      if (sunRayStagger.current) {
+        sunRayStagger.current.stop();
+      }
+
+      const listCloneSunRay = [...listItemSunRay.listSunRay];
+      if (!animate) {
+        listCloneSunRay.reverse();
+      }
+
+      sunRayStagger.current = Animated.stagger(
+        100,
+        listCloneSunRay.map((item) =>
           Animated.timing(item, {
             toValue: toValue,
             duration: duration,
             useNativeDriver: true,
           }),
         ),
-      ).start(({finished}) => {
+      );
+      sunRayStagger.current.start(({finished}) => {
+        console.log(animate);
         if (finished && animate) {
           handleSunAnimate();
         }
       });
     },
-    [animate, handleRotateAnimation],
+    [animate, listItemSunRay.listSunRay],
   );
 
   const handleFireLightAnimation = useCallback(
     (duration) => {
-      Animated.stagger(
-        500,
-        listItemSunRay.listFireSunLight.map((item) =>
+      if (sunLightStagger.current) {
+        sunLightStagger.current.stop();
+      }
+
+      const listCloneSunLight = [...listItemSunRay.listFireSunLight];
+      if (!animate) {
+        listCloneSunLight.reverse();
+      }
+
+      sunLightStagger.current = Animated.stagger(
+        100,
+        listCloneSunLight.map((item) =>
           Animated.timing(item, {
             toValue: 1,
             duration: duration,
             useNativeDriver: true,
           }),
         ),
-      ).start();
+      );
+      sunLightStagger.current.start();
     },
-    [animate, handleFireLightAnimation],
+    [animate, listItemSunRay.listFireSunLight],
   );
 
   useEffect(() => {
     const toValue = animate ? 1 : 0;
-    const duration = animate ? 500 : 1000;
+    const duration = 500;
     if (animate) {
       handleRotateAnimation(toValue, duration);
     } else {
       handleRotateAnimation(toValue, duration);
       handleFireLightAnimation(duration);
     }
-  }, [animate]);
+  }, [animate, handleRotateAnimation, handleFireLightAnimation]);
 
   return (
     <View style={styles.container}>
@@ -112,10 +136,7 @@ const SunRay = ({animate, sizeBlockSunRayList, handleSunAnimate}) => {
               style={[
                 styles.sunLight,
                 {
-                  opacity: item.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 1],
-                  }),
+                  opacity: item,
                 },
                 !animate && {
                   transform: [
